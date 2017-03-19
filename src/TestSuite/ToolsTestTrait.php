@@ -31,6 +31,26 @@ trait ToolsTestTrait {
 		return !empty($_SERVER['argv']) && in_array('--debug', $_SERVER['argv'], true);
 	}
 
+    /**
+     * Outputs debug information during a test run.
+     * This is a convenience output handler since debug() itself is not desired
+     * for tests in general.
+     *
+     * Forces flushing the output if -v or -vv is set.
+     *
+     * @param mixed $data
+     * @return void
+     */
+    protected static function debug($data)
+    {
+        if (!static::isVerbose()) {
+            return;
+        }
+        $showFrom = static::isVerbose(true);
+
+        debug($data, null, $showFrom);
+    }
+
 	/**
 	 * Checks if verbose flag is set.
 	 *
@@ -51,25 +71,6 @@ trait ToolsTestTrait {
 			return true;
 		}
 		return false;
-	}
-
-	/**
-	 * Outputs debug information during a test run.
-	 * This is a convenience output handler since debug() itself is not desired
-	 * for tests in general.
-	 *
-	 * Forces flushing the output if -v or -vv is set.
-	 *
-	 * @param mixed $data
-	 * @return void
-	 */
-	protected static function debug($data) {
-		if (!static::isVerbose()) {
-			return;
-		}
-		$showFrom = static::isVerbose(true);
-
-		debug($data, null, $showFrom);
 	}
 
 	/**

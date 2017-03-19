@@ -52,6 +52,29 @@ class Number extends CakeNumber {
 		return static::currency($amount, null, $formatOptions);
 	}
 
+    /**
+     * Overwrite to allow
+     *
+     * - signed: true/false
+     *
+     * @param float $number
+     * @param string|null $currency
+     * @param array $options
+     * @return string
+     */
+    public static function currency($number, $currency = null, array $options = [])
+    {
+        $defaults = [
+            'positive' => '+', 'signed' => false
+        ];
+        $options += $defaults;
+        $sign = '';
+        if ($number > 0 && !empty($options['signed'])) {
+            $sign = $options['positive'];
+        }
+        return $sign . parent::currency($number, $currency, $options);
+    }
+
 	/**
 	 * Format numeric values
 	 * should not be used for currencies
@@ -137,28 +160,6 @@ class Number extends CakeNumber {
 	}
 
 	/**
-	 * Overwrite to allow
-	 *
-	 * - signed: true/false
-	 *
-	 * @param float $number
-	 * @param string|null $currency
-	 * @param array $options
-	 * @return string
-	 */
-	public static function currency($number, $currency = null, array $options = []) {
-		$defaults = [
-			'positive' => '+', 'signed' => false
-		];
-		$options += $defaults;
-		$sign = '';
-		if ($number > 0 && !empty($options['signed'])) {
-			$sign = $options['positive'];
-		}
-		return $sign . parent::currency($number, $currency, $options);
-	}
-
-	/**
 	 * Returns a formatted-for-humans file size.
 	 *
 	 * @param int $size Size in bytes
@@ -173,6 +174,44 @@ class Number extends CakeNumber {
 		}
 		return $size;
 	}
+
+    /**
+     * Converts filesize from human readable string to bytes
+     *
+     * @param string $size Size in human readable string like '5MB', '5M', '500B', '50kb' etc.
+     * @param mixed $default Value to be returned when invalid size was used, for example 'Unknown type'
+     * @return mixed Number of bytes as integer on success, `$default` on failure if not false
+     * @throws CakeException On invalid Unit type.
+     * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/number.html#NumberHelper::fromReadableSize
+     */
+    public static function fromReadableSize($size, $default = false)
+    {
+        if (ctype_digit($size)) {
+            return $size;
+        }
+        $size = strtoupper($size);
+        $l = -2;
+        $i = array_search(substr($size, -2), ['KB', 'MB', 'GB', 'TB', 'PB']);
+        if ($i === false) {
+            $l = -1;
+            $i = array_search(substr($size, -1), ['K', 'M', 'G', 'T', 'P']);
+        }
+        if ($i !== false) {
+            $size = substr($size, 0, $l);
+            $size = $size * pow(1024, $i + 1);
+            return round($size);
+        }
+
+        if (substr($size, -1) === 'B' && ctype_digit(substr($size, 0, -1))) {
+            $size = substr($size, 0, -1);
+            return round($size);
+        }
+
+        if ($default !== false) {
+            return $default;
+        }
+        throw new CakeException(__d('cake_dev', 'No unit type.'));
+    }
 
 	/**
 	 * Get the rounded average.
@@ -205,28 +244,6 @@ class Number extends CakeNumber {
 	}
 
 	/**
-	 * Round value up.
-	 *
-	 * @param float $number
-	 * @param int $increment
-	 * @return float result
-	 */
-	public static function roundUpTo($number, $increment = 1) {
-		return ceil($number / $increment) * $increment;
-	}
-
-	/**
-	 * Round value down.
-	 *
-	 * @param float $number
-	 * @param int $increment
-	 * @return float result
-	 */
-	public static function roundDownTo($number, $increment = 1) {
-		return floor($number / $increment) * $increment;
-	}
-
-	/**
 	 * Get decimal places
 	 *
 	 * @param float $number
@@ -244,6 +261,30 @@ class Number extends CakeNumber {
 		}
 		return $decimalPlaces;
 	}
+
+    /**
+     * Round value up.
+     *
+     * @param float $number
+     * @param int $increment
+     * @return float result
+     */
+    public static function roundUpTo($number, $increment = 1)
+    {
+        return ceil($number / $increment) * $increment;
+    }
+
+    /**
+     * Round value down.
+     *
+     * @param float $number
+     * @param int $increment
+     * @return float result
+     */
+    public static function roundDownTo($number, $increment = 1)
+    {
+        return floor($number / $increment) * $increment;
+    }
 
 	/**
 	 * Can compare two float values
