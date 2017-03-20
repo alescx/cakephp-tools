@@ -68,7 +68,7 @@ class SluggedBehavior extends Behavior {
 		'separator' => '-',
 		'length' => null,
 		'overwrite' => false,
-		'unique' => false,
+		'unique' => true,
 		'notices' => true,
 		'case' => null,
 		'replace' => [
