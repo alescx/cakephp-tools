@@ -1,15 +1,23 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: alexp
- * Date: 15/04/17
- * Time: 20:37
- */
-
 namespace TestApp\Controller;
 
+use Tools\Controller\Controller;
 
-class AjaxComponentTestController
-{
+/**
+ * Use Controller instead of AppController to avoid conflicts
+ *
+ * @property \Tools\Controller\Component\CommonComponent $Common
+ */
+class AjaxComponentTestController extends Controller {
+
+    /**
+     * @var array
+     */
+    public $components = ['Tools.Ajax'];
+
+    /**
+     * @var array
+     */
+    public $autoRedirectActions = ['allowed'];
 
 }

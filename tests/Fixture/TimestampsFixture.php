@@ -6,6 +6,8 @@ use Cake\TestSuite\Fixture\TestFixture;
 
 class TimestampsFixture extends TestFixture
 {
+    public $connection = 'test';
+
     /**
      * @var array
      */
@@ -13,7 +15,8 @@ class TimestampsFixture extends TestFixture
         'id' => ['type' => 'integer'],
         'title' => ['type' => 'string', 'length' => 255],
         'modified' => ['type' => 'integer'],
-        'created' => ['type' => 'integer']
+        'created' => ['type' => 'integer'],
+        '_constraints' => ['primary' => ['type' => 'primary', 'columns' => ['id']]]
     ];
 
     /**

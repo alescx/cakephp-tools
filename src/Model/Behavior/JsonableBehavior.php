@@ -89,7 +89,7 @@ class JsonableBehavior extends Behavior {
 			throw new RuntimeException('Fields and Map need to be of the same length if map is specified.');
 		}
 		foreach ($this->_config['fields'] as $field) {
-			$this->_table->schema()->columnType($field, 'array');
+			$this->_table->getSchema()->columnType($field, 'array');
 		}
 		if ($this->_config['encodeParams']['options'] === null) {
 			$options = JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT | JSON_ERROR_INF_OR_NAN | JSON_PARTIAL_OUTPUT_ON_ERROR;
@@ -198,8 +198,8 @@ class JsonableBehavior extends Behavior {
 		}
 
 		if (!is_array($val)) {
-			return null;
-		}
+            return null;
+        }
 
 		return json_encode($val, $this->_config['encodeParams']['options'], $this->_config['encodeParams']['depth']);
 	}
